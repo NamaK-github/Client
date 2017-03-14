@@ -3,6 +3,7 @@
  */
 public class Main {
     public static void main(String[] args) {
-        new ClientChat("localhost", 9999);
+        //new ClientChat("localhost", 9999);
+        new ClientRegistration();
     }
 }

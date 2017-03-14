@@ -80,7 +80,7 @@ public class ClientChat extends JFrame {
         passField.setEnabled(false);
         authPanel.add(new JLabel("  Пароль:"));
         authPanel.add(passField);
-        registrationButton = new JButton("Зарегистрироваться");
+        registrationButton = new JButton("Регистрация");
         registrationButton.setEnabled(false);
         authPanel.add(registrationButton);
         add(authPanel, BorderLayout.NORTH);
