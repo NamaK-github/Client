@@ -12,32 +12,46 @@ import java.net.Socket;
 public class ClientChat extends JFrame {
     private DataInputStream in;
     private DataOutputStream out;
-    private Socket socket;
+    private Socket socket = null;
     private final String serverHost;
     private final int serverPort;
     private JPanel authPanel;
     private JPanel messagePanel;
     private JTextField loginField;
+    private JPasswordField passField;
+    private JButton signInButton;
+    private JButton registrationButton;
     private JTextArea chatHistoryArea;
     private Thread thread;
 
     public ClientChat(String serverHost, int serverPort) {
         this.serverHost = serverHost;
         this.serverPort = serverPort;
-        initConnection();
         initGUI();
+        initConnection();
         initServerListener();
     }
 
     private void initConnection() {
-        try {
-            socket = new Socket(serverHost, serverPort);
-            in = new DataInputStream(socket.getInputStream());
-            out = new DataOutputStream(socket.getOutputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
+        chatHistoryArea.setForeground(Color.LIGHT_GRAY);
+        chatHistoryArea.setText("Ожидание подключения к серверу...");
+        while (true) {
+            try {
+                socket = new Socket(serverHost, serverPort);
+                in = new DataInputStream(socket.getInputStream());
+                out = new DataOutputStream(socket.getOutputStream());
+            } catch (Exception e) {
+            }
+            if (socket != null) {
+                chatHistoryArea.setText("Подключение к серверу завершено.\n" +
+                        "Пожалуйста, войдите в свою учётную запись или зарегистрируйтесь.\n");
+                loginField.setEnabled(true);
+                passField.setEnabled(true);
+                signInButton.setEnabled(true);
+                registrationButton.setEnabled(true);
+                break;
+            }
         }
-
     }
 
     private void initGUI() {
@@ -54,14 +68,21 @@ public class ClientChat extends JFrame {
         authPanel = new JPanel(new GridLayout(2, 3));
         loginField = new JTextField();
         loginField.setToolTipText("Введите логин");
+        loginField.setEnabled(false);
         authPanel.add(new JLabel("  Логин:"));
         authPanel.add(loginField);
-        JButton signInButton = new JButton("Вход");
+        signInButton = new JButton("Вход");
+        signInButton.setEnabled(false);
         authPanel.add(signInButton);
-        JTextField passField = new JTextField();
-        loginField.setToolTipText("Введите пароль");
+        passField = new JPasswordField();
+        passField.setEchoChar('*');
+        passField.setToolTipText("Введите пароль");
+        passField.setEnabled(false);
         authPanel.add(new JLabel("  Пароль:"));
         authPanel.add(passField);
+        registrationButton = new JButton("Зарегистрироваться");
+        registrationButton.setEnabled(false);
+        authPanel.add(registrationButton);
         add(authPanel, BorderLayout.NORTH);
         signInButton.addActionListener(new ActionListener() {
             @Override
@@ -101,13 +122,15 @@ public class ClientChat extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 super.windowClosing(e);
-                try {
-                    out.writeUTF("end___session___client");
-                    out.flush();
-                    out.close();
-                    in.close();
-                    socket.close();
-                } catch (IOException e1) {
+                if (socket != null) {
+                    try {
+                        out.writeUTF("end___session___client");
+                        out.flush();
+                        out.close();
+                        in.close();
+                        socket.close();
+                    } catch (IOException e1) {
+                    }
                 }
             }
         });
@@ -141,6 +164,8 @@ public class ClientChat extends JFrame {
                         if (message.equalsIgnoreCase("end___session___server")) {
                             break;
                         } else if (message.equalsIgnoreCase("signin___successfull")) {
+                            chatHistoryArea.setText("");
+                            chatHistoryArea.setForeground(Color.BLACK);
                             JOptionPane.showMessageDialog(null, "Вы вошли в чат.");
                             authPanel.setVisible(false);
                             messagePanel.setVisible(true);
