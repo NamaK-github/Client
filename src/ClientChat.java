@@ -75,7 +75,6 @@ public class ClientChat extends JFrame {
         signInButton.setEnabled(false);
         authPanel.add(signInButton);
         passField = new JPasswordField();
-        passField.setEchoChar('*');
         passField.setToolTipText("Введите пароль");
         passField.setEnabled(false);
         authPanel.add(new JLabel("  Пароль:"));
@@ -98,7 +97,7 @@ public class ClientChat extends JFrame {
         registrationButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ClientRegistration.getInstance();
+                ClientRegistration.getInstance(ClientChat.this);
             }
         });
         //Панель отправки сообщений
@@ -187,5 +186,9 @@ public class ClientChat extends JFrame {
         });
         thread.setDaemon(true);
         thread.start();
+    }
+
+    void registration (String login, String password, String nick){
+
     }
 }

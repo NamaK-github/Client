@@ -1,13 +1,17 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Arrays;
 
 /**
  * Created by NamaK on 14.03.17.
  */
 public class ClientRegistration extends JFrame {
     private static ClientRegistration instance;
+    private static ClientChat clientChat;
 
     private ClientRegistration() {
         initGUI();
@@ -33,7 +37,24 @@ public class ClientRegistration extends JFrame {
         add(panel, BorderLayout.CENTER);
         JButton regButton = new JButton("Зарегистрироваться");
         add(regButton, BorderLayout.SOUTH);
-        setVisible(true);
+        //Регистрация
+        regButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (login.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Ведите логин.");
+                } else if (password.getPassword().length == 0) {
+                    JOptionPane.showMessageDialog(null, "Введите пароль.");
+                } else if (!Arrays.equals(password.getPassword(), confimPassword.getPassword())) {
+                    JOptionPane.showMessageDialog(null, "Пароли не совпадают.");
+                } else if (nick.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Введите ник.");
+                } else {
+                    clientChat.registration(login.getText(), password.getPassword().toString(), nick.getText());
+                }
+            }
+        });
+        //Закрытие
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -41,9 +62,11 @@ public class ClientRegistration extends JFrame {
                 instance = null;
             }
         });
+        setVisible(true);
     }
 
-    public static ClientRegistration getInstance() {
+    public static ClientRegistration getInstance(ClientChat cc) {
+        clientChat = cc;
         if (instance == null) {
             instance = new ClientRegistration();
         }
