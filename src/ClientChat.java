@@ -188,7 +188,8 @@ public class ClientChat extends JFrame {
         thread.start();
     }
 
-    void registration (String login, String password, String nick){
-
+    void registration (String login, String password, String nick) throws IOException{
+        out.writeUTF("reg___" + login + "___" + password + "___" + nick);
+        out.flush();
     }
 }
