@@ -94,6 +94,13 @@ public class ClientChat extends JFrame {
                 }
             }
         });
+        //Регистрация
+        registrationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ClientRegistration.getInstance();
+            }
+        });
         //Панель отправки сообщений
         messagePanel = new JPanel();
         messagePanel.setLayout(new BorderLayout());
@@ -117,7 +124,7 @@ public class ClientChat extends JFrame {
         messagePanel.add(sendButton, BorderLayout.EAST);
         add(messagePanel, BorderLayout.SOUTH);
         messagePanel.setVisible(false);
-
+        //Закрытие
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
