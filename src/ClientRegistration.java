@@ -50,7 +50,7 @@ public class ClientRegistration extends JFrame {
                 } else if (nick.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Введите ник.");
                 } else {
-                    clientChat.registration(login.getText(), password.getPassword().toString(), nick.getText());
+                    clientChat.registration(login.getText(), String.valueOf(password.getPassword()), nick.getText());
                 }
             }
         });

@@ -86,11 +86,7 @@ public class ClientChat extends JFrame {
         signInButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    sendAuth(loginField.getText(), passField.getText());
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+                sendAuth(loginField.getText(), String.valueOf(passField.getPassword()));
             }
         });
         //Регистрация
@@ -135,6 +131,10 @@ public class ClientChat extends JFrame {
                         out.close();
                         in.close();
                         socket.close();
+                        loginField.setEnabled(false);
+                        passField.setEnabled(false);
+                        signInButton.setEnabled(false);
+                        registrationButton.setEnabled(false);
                     } catch (IOException e1) {
                     }
                 }
@@ -143,9 +143,13 @@ public class ClientChat extends JFrame {
         setVisible(true);
     }
 
-    private void sendAuth(String login, String password) throws IOException {
-        out.writeUTF("auth___" + login + "___" + password);
-        out.flush();
+    private void sendAuth(String login, String password) {
+        try {
+            out.writeUTF("auth___" + login + "___" + password);
+            out.flush();
+        } catch (IOException e) {
+        }
+
     }
 
     private void sendMessage(JTextField jTextField) {
@@ -178,6 +182,8 @@ public class ClientChat extends JFrame {
                             setTitle(loginField.getText());
                         } else if (message.equalsIgnoreCase("signin___fail")) {
                             JOptionPane.showMessageDialog(null, "Ошибка авторизации. Попробуйте ещё раз.");
+                        } else if (message.equalsIgnoreCase("reg___login___error")) {
+                            JOptionPane.showMessageDialog(null, "Данный логин уже используется.");
                         } else chatHistoryArea.append(message + "\n");
                     }
                 } catch (IOException e) {
@@ -188,8 +194,11 @@ public class ClientChat extends JFrame {
         thread.start();
     }
 
-    void registration (String login, String password, String nick) throws IOException{
-        out.writeUTF("reg___" + login + "___" + password + "___" + nick);
-        out.flush();
+    void registration(String login, String password, String nick) {
+        try {
+            out.writeUTF("reg___" + login + "___" + password + "___" + nick);
+            out.flush();
+        } catch (IOException e) {
+        }
     }
 }
